@@ -1,0 +1,97 @@
+<heaml>
+    <head>
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <script src="../js/jquery.min.js"></script>
+        <script>
+            $(function() {
+
+            });
+
+            function track_order() {
+                console.log($("#id_input").val());
+                var id = $("#id_input").val();
+                $.ajax('../php/track_order.php', {
+                    type: 'post',
+                    data: {'id': id},
+                    success: function (result) {
+                        console.log('result', result);
+                        var container = document.getElementById("container");
+                        $("#container").empty();
+                        var bill, name, address, status;
+                        var row4 = container.insertRow();
+                        var imageCell4 = row4.insertCell();
+                        var priceCell4 = row4.insertCell();
+                        var quantityCell4 = row4.insertCell();
+                        var statusCell4 = row4.insertCell();
+
+                        imageCell4.outerHTML = "<th><center>Images</center></th>";
+                        priceCell4.outerHTML = "<th><center>Prices</center></th>";
+                        quantityCell4.outerHTML = "<th><center>Quantity</center></th>";
+                        JSON.parse(result).forEach(function(element) {
+
+                            bill = element.total_bill;
+                            name = element.customer_name;
+                            address = element.delivery_address;
+                            status = element.status;
+                            var row = container.insertRow();
+                            var imageCell = row.insertCell();
+                            var priceCell = row.insertCell();
+                            var quantityCell = row.insertCell();
+                            var statusCell = row.insertCell();
+
+                            imageCell.innerHTML = '<img style="height: 100px; width: 100px;"src=' + element.image_path + ">";
+                            priceCell.innerHTML = element.price;
+                            quantityCell.innerHTML = element.quantity;
+                        }, this);
+
+                        var row3 = container.insertRow();
+                        var nameCell1 = row3.insertCell();
+                        var addressCell1 = row3.insertCell();
+                        var billCell1 = row3.insertCell();
+                        var statusCell1 = row3.insertCell();
+
+                        nameCell1.outerHTML = "<th><center>Name</center></th>";
+                        addressCell1.outerHTML = "<th><center>Address</center></th>";
+                        billCell1.outerHTML = "<th><center>Total Bill</center></th>";
+                        statusCell1.outerHTML = "<th><center>Status</center></th>";
+
+                        var row2 = container.insertRow();
+                        var nameCell = row2.insertCell();
+                        var addressCell = row2.insertCell();
+                        var billCell = row2.insertCell();
+                        var statusCell = row2.insertCell();
+
+                        nameCell.innerHTML = name;
+                        addressCell.innerHTML = address;
+                        billCell.innerHTML = bill;
+                        statusCell.innerHTML = status;
+
+                    }
+                });
+            }
+
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h2>Track Your Order</h2>
+                    <div class="form-group">
+                        <input id='id_input' class="form-control" type="number" placeholder="enter you order id">
+                    </div>
+                    <div class="form-group">
+                        <button onclick="track_order()" class="btn btn-default">Track</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="table-responsive">
+                <table id="container" class="table table-bordered">
+                    <h2>Order Details</h2>
+                </table>
+            </div>
+        </div>
+
+    </body>
+</heaml>

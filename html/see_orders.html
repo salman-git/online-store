@@ -1,0 +1,114 @@
+<html>
+
+    <head>
+        <link rel="stylesheet" href="../css/bootstrap.css">
+        <script src="../js/jquery.min.js"></script>
+        <script>
+            $(function () {
+                fillDoc('');
+                $("#filter").change(function () {
+                    console.log('function changed', $("#filter").val());
+                    fillDoc($("#filter").val());
+                });
+            });
+
+            function fillDoc(filterParam) {
+                clearTable();
+                $.ajax('../php/see_orders.php', {
+                    type: 'post',
+                    data: {'filterParam':filterParam},
+                    success: function (response) {
+
+                        var jsonarray = JSON.parse(response);
+                        console.log('response', jsonarray[0]);
+                        var container = document.getElementById("container"); // container is a table
+                        var row1 = container.insertRow();
+                        var name_cell1 = row1.insertCell();
+                        var email_cell1 = row1.insertCell();
+                        var phone_cell1 = row1.insertCell();
+                        var address_cell1 = row1.insertCell();
+                        var status_cell1 = row1.insertCell();
+                        var delivery_cell1 = row1.insertCell();
+
+                        name_cell1.outerHTML = '<th>Name</th>';
+                        email_cell1.outerHTML = '<th>Email</th>';
+                        phone_cell1.outerHTML = '<th>Phone No</th>';
+                        address_cell1.outerHTML = '<th>Address</th>';
+                        status_cell1.outerHTML = '<th>Status</th>';
+                        delivery_cell1.outerHTML = '<th>Status</th>';
+
+                        jsonarray.forEach(function (element) {
+                            var row = container.insertRow();
+                            var name_cell = row.insertCell();
+                            var email_cell = row.insertCell();
+                            var phone_cell = row.insertCell();
+                            var address_cell = row.insertCell();
+                            var status_cell = row.insertCell();
+                            var delivery_cell = row.insertCell();
+
+                            name_cell.innerHTML = element.customer_name;
+                            email_cell.innerHTML = element.customer_email;
+                            phone_cell.innerHTML = element.customer_phone;
+                            address_cell.innerHTML = element.delivery_address;
+                            status_cell.innerHTML = '<button onclick="approveOrder(' + element.order_id + ')">' + element.status + '</button>';
+                            delivery_cell.innerHTML = '<button onclick="deliverOrder(' + element.order_id + ')">Delivered</button>';
+                        }, this);
+
+                    }
+                });
+            }
+
+            function approveOrder(order_id) {
+                $.ajax('../php/approve_order.php', {
+                    type: 'post',
+                    data: { 'id': order_id, 'type': 0 },
+                    success: function (resultCode) {
+                        fillDoc('');
+                    }
+                });
+            }
+
+            function deliverOrder(order_id) {
+                $.ajax('../php/approve_order.php', {
+                    type: 'post',
+                    data: {'id': order_id, 'type': 1},
+                    success: function (result) {
+                        fillDoc('');
+                    }
+                });
+            }
+            function clearTable() {
+                $("#container").empty();
+            }
+
+            function filterResults() {
+
+            }
+        </script>
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <select id="filter" class="form-control">
+                            <option value="">ALL</option>
+                            <option value="PENDING">PENDING</option>
+                            <option value="APPROVED">APPROVED</option>
+                            <option value="DELIVERED">DELIVERED</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="container" class="table table-bordered table-striped table-hover">
+
+                </table>
+            </div>
+        </div>
+
+
+    </body>
+
+</html>

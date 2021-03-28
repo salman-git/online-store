@@ -1,0 +1,72 @@
+<html>
+
+<head>
+    <script src="../js/jquery.min.js"></script>
+    <script>
+        var jsonData;
+        $(function () {
+            loadCategories();
+            
+        });
+
+        function loadCategories() {
+            $.ajax({
+                // loading navigation menu from json file
+                url: '../json/grand_categories.json',
+                type: 'post',
+                success: function (result) {
+                    console.log('ajax response: ', result);
+
+                    jsonData = result;
+                    var categories = jsonData["grand_categories"];
+                    console.log('categories', categories);
+                    // navigation.append("<ul>");
+                    var navMenu = $("#nav_menu_list");
+                    navMenu.empty();
+
+                    categories.forEach(function (element) {
+                        navMenu.append("<li><b>" + element + "</b></li>");
+                    }, this);
+                    navMenu.append("<input type='text' placeholder='new category name' id=\"newCategory\">" +
+                        "<button onclick='addCategory()'>+</button>")
+
+                }
+            });
+        }
+
+        function addCategory() {
+            var value = $("#newCategory").val();
+            if (value.length > 0) {
+                jsonData["grand_categories"].push(value);
+                console.log('after push', jsonData);
+                updateJson(value);
+            
+            }
+
+        }
+
+        function updateJson(fileToCreate) {
+            $.ajax({
+                url: '../php/updateCategories.php',
+                type: 'post',
+                dataType: 'json',
+                data: { 'jsonData': jsonData, 'fileName':'grand_categories.json', 'fileToCreate':fileToCreate },
+                success: function (response) {
+                    console.log('json updated ', response);   
+                }
+            });
+            loadCategories();
+        }
+    </script>
+</head>
+
+<body>
+    <div id="navigation" class="navigation">
+        <ul id="nav_menu_list">
+            <input type='text' placeholder='new category name' id="newCategory">
+            <button onclick='addCategory()'>+</button>
+        </ul>
+    </div>
+</body>
+
+</html>

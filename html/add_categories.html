@@ -1,0 +1,124 @@
+<html>
+
+<head>
+    <title>add categories</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <script src="../js/jquery.min.js"></script>
+    <script>
+        var jsonData;
+        var categoryFile;
+
+        $(function () {
+
+                $.ajax( {
+                    url: '../json/grand_categories.json',
+                    type: 'post',
+                    success: function (result) {
+                        console.log(result);
+                        result.grand_categories.forEach(function(element) {
+                            $("#cat").append('<option>'+element+'</option>');
+                            categoryFile = '../json/' + result.grand_categories[0] + ".json";
+                            loadCategories();
+                        }, this);
+                    }
+                });
+
+                $('#cat').change(function(a) {
+                    //console.log('changed', $("#cat").val());
+                    categoryFile = "../json/" + $("#cat").val() + ".json";
+                    loadCategories();
+                });
+
+            
+        });
+                            
+        function loadCategories() {
+            console.log('catFile', categoryFile);
+            $.ajax({
+                // loading navigation menu from json file
+                url: categoryFile,
+                type: 'post',
+                success: function (result) {
+                    console.log('ajax response: ', result);
+
+                    jsonData = result;
+                    var categories = jsonData["categories"];
+                    console.log('categories', categories);
+                    // navigation.append("<ul>");
+                    var navMenu = $("#nav_menu_list");
+                    navMenu.empty();
+                    categories.forEach(function (category) {
+                        navMenu.append("<li><b>" + category + "</b></li>");
+                        var sub_categories = jsonData.sub_categories[category];
+                        navMenu.append("<ul id='" + category + "'>");
+                        var subNavMenu = $("#" + category);
+                        sub_categories.forEach(function (sub_category) {
+                            subNavMenu.append("<li><b>" + sub_category + "</b></li>");
+                        }, this);
+                        subNavMenu.append("<input type='text' id='addTo_" + category + "' placeholder='new sub-category name'>" +
+                            "<button onclick='addSubCategory(\"" + category + "\")'>+</button>");
+                    }, this);
+
+                    navMenu.append("<input type='text' placeholder='new category name' id=\"newCategory\">" +
+                        "<button onclick='addCategory()'>+</button>")
+
+                }
+            });
+        }
+
+        function addSubCategory(category) {
+            var newCategoryText = $("#addTo_" + category).val();
+            if (newCategoryText.length > 0) {
+                jsonData["sub_categories"][category].push(newCategoryText);
+                console.log('jsonUpdate ', jsonData);
+
+                updateJson();
+                loadCategories();
+            }
+        }
+
+        function addCategory() {
+            if ($("#newCategory").val().length > 0) {
+                $("#nav_menu_list").append("<input type='text' placeholder='new sub-category name' id=\"newSubCategory\">" +
+                    "<button onclick='addCategory2()'>+</button>");
+            }
+
+        }
+        function addCategory2() {
+            var newCategory = $("#newCategory").val();
+            newCategory = newCategory.replace(' ', '_');
+            if ($("#newSubCategory").val().length > 0) {
+                jsonData["categories"].push(newCategory);
+                jsonData["sub_categories"][newCategory] = new Array($("#newSubCategory").val());
+
+                updateJson();
+              
+            }
+        }
+        function updateJson() {
+            $.ajax({
+                url: '../php/updateCategories.php',
+                type: 'post',
+                dataType: 'json',
+                data: { 'jsonData': jsonData , 'fileName': categoryFile},
+                success: function (response) {
+                    console.log('json updated ', response);
+                    loadCategories();
+                    console.log('jsonUpdate ', jsonData);
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <select id="cat"></select>
+    <div id="navigation" class="navigation">
+        <ul id="nav_menu_list">
+            <input type='text' placeholder='new category name' id="newCategory">
+            <button onclick='addCategory()'>+</button>
+        </ul>
+    </div>
+</body>
+
+</html>

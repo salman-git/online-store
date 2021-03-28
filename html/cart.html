@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="../js/jquery.min.js"></script>
+    <script>
+        $(function () {
+            var cartString = sessionStorage.getItem('cart');
+            if (cartString == null) {
+                $("#container").append('<h1>your cart is empty</h1>');
+                return;
+            }
+            var orders = JSON.parse(cartString);
+
+            for (var j = 0; j < orders.length; j++) {
+                var order = orders[j];
+                var stringToAppend = '<div><img width=100px height=100px src="' + order.image_path + '"><br>price:<b>' + order.price + 'pkr</b></br>quantity:<input type="number" value="' + order.quantity + '"/></div>';
+                $("#container").append(stringToAppend);
+            };
+            console.log('orders', orders);
+        });
+
+        function clearCart() {
+            sessionStorage.clear();
+            location.reload(true);
+        }
+
+    </script>
+</head>
+
+<body>
+    <!-- if the cart is empty then don't show this button-->
+    <div style="box-shadow: 0px 10px 5px #888888; position:fixed; top:0; left:0;  width:100%;">
+        <button onclick="clearCart()"><a href="#">clear cart</a></button>
+        <a href="checkout.html">checkout</a>
+    </div>
+    <div id="container"></div>
+
+</body>
+
+</html>

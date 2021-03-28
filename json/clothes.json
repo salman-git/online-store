@@ -1,0 +1,38 @@
+{
+    "categories": [
+        "pakistani",
+        "westren",
+        "Alkaram",
+        "Indian",
+        "Nishat",
+        "Khaadi"
+    ],
+    "sub_categories": {
+        "pakistani": [
+            "unstitched",
+            "dupattas",
+            "shalwar qamees"
+        ],
+        "westren": [
+            "jeans",
+            "t-shirts",
+            "tights",
+            "mini skirts"
+        ],
+        "Alkaram": [
+            "Unstitched"
+        ],
+        "Indian": [
+            "pathan"
+        ],
+        "Nishat": [
+            "Linen",
+            "Lawn",
+            "Fabrics",
+            "Jerin"
+        ],
+        "Khaadi": [
+            "Nothing"
+        ]
+    }
+}

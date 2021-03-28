@@ -1,0 +1,19 @@
+{
+    "categories": [
+        "Summer",
+        "winter",
+        "Heels"
+    ],
+    "sub_categories": {
+        "Summer" : [
+            "100",
+            "200"
+        ],
+        "winter": [
+            "500", "800"
+        ],
+        "Heels": [
+            "High", "low"
+        ]
+    }
+}

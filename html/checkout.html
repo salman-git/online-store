@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../js/jquery.min.js"></script>
+        <script>
+            $(function() {
+                var orders = JSON.parse(sessionStorage.getItem('cart'));
+                console.log('order', orders);
+                var form = document.forms['orderForm'];
+                var orderDetails = [];
+                orders.forEach(function(order) {
+                    orderDetails.push({'id': order.id, 'quantity': order.quantity, 'price': order.price});
+                }, this);
+                form.orderDetails.value = JSON.stringify(orderDetails);
+            });
+            function submit() {
+                sessionStorage.clear();
+            }
+        </script>
+    </head>
+    <body>
+        <form name='orderForm' action="../php/submitOrder.php" id="orders" method="post" onsubmit="submit()">
+            name: <input type="text" name="name"><br>
+            email: <input type="text" name="email"><br>
+            phone: <input type="text" name="phone"><br>
+            delivery address: <input type="text" name="address"><br>
+            <input type="hidden" name="orderDetails">
+            <input type="submit" value="Order">
+        </form>
+    </body>
+</html>
